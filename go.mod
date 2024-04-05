@@ -1,4 +1,4 @@
-module lakonia/gorm-txn-plugin
+module github.com/lakonia/gorm_txn
 
 go 1.21.3
 
