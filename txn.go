@@ -33,7 +33,7 @@ func (txn *GormTxnPlugin) registerCallbacks(db *gorm.DB) {
 func (txn *GormTxnPlugin) beginTxnIfRequired(db *gorm.DB) {
 	ctx := db.Statement.Context
 	if isTxn(ctx) {
-		if txn := getDB(ctx); txn == nil {
+		if getDB(ctx) == nil {
 			db.Statement.SkipDefaultTransaction = true
 			db.Statement.DisableNestedTransaction = false
 			ctx = withDB(ctx, db.Begin())
