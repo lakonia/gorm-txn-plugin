@@ -1,4 +1,4 @@
-package gorm_txn_plugin
+package gorm_txn
 
 import (
 	"context"
