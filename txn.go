@@ -9,6 +9,9 @@ const pluginName = "gorm:txn-plugin"
 
 type GormTxnPlugin struct {
 	*gorm.DB
+
+	disableNestedTransaction bool
+	debug bool
 }
 
 func (txn *GormTxnPlugin) Name() string {
@@ -18,6 +21,17 @@ func (txn *GormTxnPlugin) Name() string {
 func (txn *GormTxnPlugin) Initialize(db *gorm.DB) error {
 	txn.DB = db
 	txn.registerCallbacks(db)
+	return nil
+}
+
+
+func (txn *GormTxnPlugin) WithSkipDefaultTransaction(flag bool) error {
+	txn.disableNestedTransaction = flag
+	return nil
+}
+
+func (txn *GormTxnPlugin) Debug() error {
+	txn.debug = true
 	return nil
 }
 
@@ -35,8 +49,14 @@ func (txn *GormTxnPlugin) beginTxnIfRequired(db *gorm.DB) {
 	if isTxn(ctx) {
 		if getDB(ctx) == nil {
 			db.Statement.SkipDefaultTransaction = true
-			db.Statement.DisableNestedTransaction = false
-			ctx = withDB(ctx, db.Begin())
+			db.Statement.DisableNestedTransaction = txn.disableNestedTransaction
+
+			db = db.Begin()
+			if txn.debug {
+				db = db.Debug()
+			}
+
+			ctx = withDB(ctx, db)
 		}
 
 		db.Statement.ConnPool = getDB(ctx).Statement.ConnPool
