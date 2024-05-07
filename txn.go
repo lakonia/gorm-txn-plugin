@@ -25,14 +25,14 @@ func (txn *GormTxnPlugin) Initialize(db *gorm.DB) error {
 }
 
 
-func (txn *GormTxnPlugin) WithSkipDefaultTransaction(flag bool) error {
+func (txn *GormTxnPlugin) WithSkipDefaultTransaction(flag bool) *GormTxnPlugin {
 	txn.disableNestedTransaction = flag
-	return nil
+	return txn
 }
 
-func (txn *GormTxnPlugin) Debug() error {
+func (txn *GormTxnPlugin) Debug() *GormTxnPlugin {
 	txn.debug = true
-	return nil
+	return txn
 }
 
 func (txn *GormTxnPlugin) registerCallbacks(db *gorm.DB) {
