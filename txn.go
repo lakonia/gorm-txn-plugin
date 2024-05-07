@@ -64,7 +64,10 @@ func (txn *GormTxnPlugin) beginTxnIfRequired(db *gorm.DB) {
 }
 
 func RunInTxn(ctx context.Context, fn func(ctx context.Context) error) error {
-	ctx = beginTxn(ctx)
+	if !isTxn(ctx) {
+		ctx = beginTxn(ctx)
+	}
+	
 	err := fn(ctx)
 
 	if db := getDB(ctx); db != nil {
